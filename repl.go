@@ -21,6 +21,16 @@ func cleanInput(str string) []string {
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
+		"map": {
+			name:        "map",
+			description: "Displays 20 maps on the next page",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays 20 maps on the prev page, need to be on at least page 2",
+			callback:    commandMapb,
+		},
 		"help": {
 			name:        "help",
 			description: "Displays a help message",
@@ -53,7 +63,8 @@ func startRepl() {
 		if exists {
 			err := command.callback()
 			if err != nil {
-				fmt.Errorf("Error trying to execute the command: %w\n", err)
+				err = fmt.Errorf("error trying to execute the command: %w", err)
+				fmt.Println(err)
 			}
 		} else {
 			fmt.Println("Invalid command.")
