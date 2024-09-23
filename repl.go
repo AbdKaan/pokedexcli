@@ -5,12 +5,20 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/AbdKaan/pokedexcli/internal/pokeapi"
 )
+
+type config struct {
+	pokeapiClient    pokeapi.Client
+	nextLocationsURL *string
+	prevLocationsURL *string
+}
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 func cleanInput(str string) []string {
@@ -24,11 +32,11 @@ func getCommands() map[string]cliCommand {
 		"map": {
 			name:        "map",
 			description: "Displays 20 maps on the next page",
-			callback:    commandMap,
+			callback:    commandMapf,
 		},
 		"mapb": {
 			name:        "mapb",
-			description: "Displays 20 maps on the prev page, need to be on at least page 2",
+			description: "Displays 20 maps on the prev page",
 			callback:    commandMapb,
 		},
 		"help": {
@@ -44,7 +52,7 @@ func getCommands() map[string]cliCommand {
 	}
 }
 
-func startRepl() {
+func startRepl(cfg *config) {
 	// Create scanner and the infinite loop
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
@@ -61,7 +69,7 @@ func startRepl() {
 		commandName := clean_input[0]
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback()
+			err := command.callback(cfg)
 			if err != nil {
 				err = fmt.Errorf("error trying to execute the command: %w", err)
 				fmt.Println(err)

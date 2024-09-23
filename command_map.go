@@ -1,34 +1,40 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
-	"net/http"
 )
 
-func commandMap() error {
-	// Step 1: Make the GET request
-	resp, err := http.Get(locationArea.Next)
+func commandMapf(cfg *config) error {
+	locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsURL)
 	if err != nil {
-		return err
+		return nil
 	}
-	defer resp.Body.Close()
 
-	// Step 2: Read the response body
-	body, err := io.ReadAll(resp.Body)
+	cfg.nextLocationsURL = &locationsResp.Next
+	cfg.prevLocationsURL = &locationsResp.Previous
+
+	for _, loc := range locationsResp.Results {
+		fmt.Printf("- %s\n", loc.Name)
+	}
+	return nil
+}
+
+func commandMapb(cfg *config) error {
+	if cfg.prevLocationsURL == nil {
+		return errors.New("you're on the first page")
+	}
+
+	locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsURL)
 	if err != nil {
-		return err
+		return nil
 	}
 
-	// Step 3: Unmarshal the JSON data into the struct
-	if err := json.Unmarshal(body, &locationArea); err != nil {
-		return err
-	}
+	cfg.nextLocationsURL = &locationsResp.Next
+	cfg.prevLocationsURL = &locationsResp.Previous
 
-	// Step 4: Print the result
-	for _, result := range locationArea.Results {
-		fmt.Println(result.Name)
+	for _, loc := range locationsResp.Results {
+		fmt.Printf("- %s\n", loc.Name)
 	}
 	return nil
 }
