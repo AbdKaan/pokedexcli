@@ -8,7 +8,7 @@ import (
 	"github.com/AbdKaan/pokedexcli/internal/pokeapi"
 )
 
-func commandMapf(cfg *config) error {
+func commandMapf(cfg *config, arg string) error {
 	// Check if the location is in cache, if it's not in cache then call ListLocations
 	// which will find the next locations and add them to cache
 	locationsResp := pokeapi.LocationArea{}
@@ -43,7 +43,7 @@ func commandMapf(cfg *config) error {
 	return nil
 }
 
-func commandMapb(cfg *config) error {
+func commandMapb(cfg *config, arg string) error {
 	if cfg.prevLocationsURL == nil || *cfg.prevLocationsURL == "" {
 		return errors.New("you're on the first page")
 	}

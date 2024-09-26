@@ -20,7 +20,7 @@ type config struct {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, string) error
 }
 
 func cleanInput(str string) []string {
@@ -41,6 +41,11 @@ func getCommands() map[string]cliCommand {
 			description: "Displays 20 maps on the prev page",
 			callback:    commandMapb,
 		},
+		"explore": {
+			name:        "explore",
+			description: "Displays pokemons in a given area, need to provide the area as an argument (explore <area>)",
+			callback:    explore,
+		},
 		"help": {
 			name:        "help",
 			description: "Displays a help message",
@@ -58,7 +63,7 @@ func startRepl(cfg *config) {
 	// Create scanner and the infinite loop
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Print("pokedex > ")
+		fmt.Print("Pokedex > ")
 		// Read input
 		scanner.Scan()
 		input := scanner.Text()
@@ -71,7 +76,13 @@ func startRepl(cfg *config) {
 		commandName := clean_input[0]
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback(cfg)
+			var err error
+			if len(clean_input) > 1 {
+				err = command.callback(cfg, clean_input[1])
+			} else {
+				err = command.callback(cfg, "")
+			}
+
 			if err != nil {
 				err = fmt.Errorf("error trying to execute the command: %w", err)
 				fmt.Println(err)
