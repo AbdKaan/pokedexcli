@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/AbdKaan/pokedexcli/internal/pokecache"
 )
 
-func (c *Client) ListLocations(pageURL *string) (LocationArea, error) {
+func (c *Client) ListLocations(pokeCache *pokecache.Cache, pageURL *string) (LocationArea, error) {
 	url := baseURL + "/location-area"
 	if pageURL != nil {
 		url = *pageURL
@@ -28,8 +30,11 @@ func (c *Client) ListLocations(pageURL *string) (LocationArea, error) {
 		return LocationArea{}, err
 	}
 
+	// Add data to pokecache
+	pokeCache.Add(url, data)
+
 	locationsResp := LocationArea{}
-	if err = json.Unmarshal(data, &locationsResp); err != nil {
+	if err := json.Unmarshal(data, &locationsResp); err != nil {
 		return LocationArea{}, err
 	}
 
