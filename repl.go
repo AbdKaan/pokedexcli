@@ -13,6 +13,7 @@ import (
 type config struct {
 	pokeapiClient    pokeapi.Client
 	pokeCache        *pokecache.Cache
+	pokedex          map[string]pokeapi.Pokemon
 	nextLocationsURL *string
 	prevLocationsURL *string
 }
@@ -31,6 +32,11 @@ func cleanInput(str string) []string {
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
+		"catch": {
+			name:        "catch",
+			description: "Try to catch a pokemon!",
+			callback:    catch,
+		},
 		"map": {
 			name:        "map",
 			description: "Displays 20 maps on the next page",

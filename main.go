@@ -14,10 +14,13 @@ func main() {
 	// Create cache
 	pokeCache := pokecache.NewCache(5 * time.Minute)
 
+	pokedex := make(map[string]pokeapi.Pokemon)
+
 	// Create config
 	cfg := &config{
 		pokeapiClient: pokeClient,
 		pokeCache:     pokeCache,
+		pokedex:       pokedex,
 	}
 
 	startRepl(cfg)
