@@ -13,7 +13,7 @@ func commandHelp(cfg *config, arg string) error {
 
 	// Sort the map so we get the same order every time
 	keys := make([]string, 0)
-	for k, _ := range cliCommands {
+	for k := range cliCommands {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
