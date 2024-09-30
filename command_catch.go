@@ -18,6 +18,7 @@ func catch(cfg *config, pokemon string) error {
 	rng := rand.Intn(100)
 	pokemonBaseExp := pokemonDetails.BaseExperience
 
+	fmt.Printf("Throwing a Pokeball at %v...\n", pokemon)
 	if pokemonBaseExp < 100 {
 		if rng < 75 {
 			fmt.Printf("Congratulations, you caught %s!\n", pokemonDetails.Name)
